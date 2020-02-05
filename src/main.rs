@@ -1,16 +1,22 @@
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 use std::{fs, io};
 use structopt::StructOpt;
 use tree::util::IdentifyLast;
 
 #[derive(StructOpt)]
-#[structopt(about = "A program to recursively list the contents of a folder in a tree-like manner.")]
+#[structopt(
+    about = "A program to recursively list the contents of a folder in a tree-like manner."
+)]
 struct Opts {
     #[structopt(name = "ROOT", help = "The directory from which to start traversing")]
     root: PathBuf,
 
-    #[structopt(short = "d", long = "max-depth", help = "Maximum depth to recurse to. 0 means no recursion")]
-    max_depth: Option<usize>
+    #[structopt(
+        short = "d",
+        long = "max-depth",
+        help = "Maximum depth to recurse to. 0 means no recursion"
+    )]
+    max_depth: Option<usize>,
 }
 
 impl Opts {
@@ -36,18 +42,15 @@ fn main() {
 fn print_dir(dir: &Path, indent: String, opts: &Opts) -> io::Result<()> {
     for (is_last, entry) in fs::read_dir(dir)?.identify_last() {
         let path = entry?.path();
-        let branch = if is_last {
-            "`---"
-        } else {
-            "|---"
-        };
-        println!("{}{}{}", indent, branch, path.file_name().unwrap().to_str().unwrap());
+        let branch = if is_last { "`---" } else { "|---" };
+        println!(
+            "{}{}{}",
+            indent,
+            branch,
+            path.file_name().unwrap().to_str().unwrap()
+        );
         if path.is_dir() && !opts.max_depth_reached(indent.len() / 4) {
-            let new_indent = if is_last {
-                "    "
-            } else {
-                "|   "
-            };
+            let new_indent = if is_last { "    " } else { "|   " };
 
             print_dir(&path, format!("{}{}", indent, new_indent), opts)?;
         }
