@@ -4,11 +4,12 @@ use structopt::StructOpt;
 use tree::util::IdentifyLast;
 
 #[derive(StructOpt)]
+#[structopt(about = "A program to recursively list the contents of a folder in a tree-like manner.")]
 struct Opts {
-    #[structopt(name = "ROOT")]
+    #[structopt(name = "ROOT", help = "The directory from which to start traversing")]
     root: PathBuf,
 
-    #[structopt(short = "d", long = "max-depth")]
+    #[structopt(short = "d", long = "max-depth", help = "Maximum depth to recurse to. 0 means no recursion")]
     max_depth: Option<usize>
 }
 
